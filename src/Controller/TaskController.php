@@ -44,9 +44,26 @@ class TaskController extends AbstractController
     */
     public function search(TaskRepository $taskRepository, Request $request): JsonResponse
     {
-        $query = $request->query->get('q', '');
-        $tasks = $taskRepository->searchByTitle($query);
+        if ($request->query->get('status', '') == 'none' ){
+            $statusFilter = null;
+        } else {
+            $statusFilter = $request->query->get('status');
+        }
 
+        $filters = [
+            'title' => $request->query->get('title', ''),
+            'dueDate' => $request->query->get('dueDate', ''),
+            'status' => $statusFilter,
+        ];
+
+        $sortField = $request->query->get('sortField', 'id');
+        $sortDirection = $request->query->get('sortDirection', 'ASC');
+
+        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
+            $sortDirection = 'ASC';
+        }
+
+        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
 
         $result = [];
         foreach ($tasks as $task) {
@@ -61,6 +78,7 @@ class TaskController extends AbstractController
 
         return new JsonResponse($result);
     }
+
 
     /**
      * @Route("/new", name="task_new")
