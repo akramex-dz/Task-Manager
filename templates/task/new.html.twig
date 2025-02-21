@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="card shadow-lg p-4">
+            <h2 class="text-center mb-4">📝 Create a New Task</h2>
+
+            <div class="mb-3">
+                {% include 'task/_form.html.twig' %}
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('task_index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

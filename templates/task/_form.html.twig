@@ -1,0 +1,29 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'true'}}) }}
+
+<div class="mb-3">
+    {{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Enter task title'}}) }}
+    {{ form_errors(form.title) }}
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.status, 'Status', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.status, {'attr': {'class': 'form-select'}}) }}
+    {{ form_errors(form.status) }}
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.dueDate, 'Due Date', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.dueDate, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.dueDate) }}
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.image, 'Upload Image', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.image) }}
+</div>
+
+<button type="submit" class="btn btn-primary w-100">💾 Save Task</button>
+
+{{ form_end(form, {'render_rest': false}) }}
