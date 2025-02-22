@@ -26,17 +26,7 @@ class TaskController extends AbstractController
      */
     public function index(TaskRepository $taskRepository, Request $request): Response
     {
-        $searchQuery = $request->query->get('q', '');  // Get search term from query string
-        if ($searchQuery != '' ) {
-            $tasks = $taskRepository->searchByTitle($searchQuery);
-        } else {
-            $tasks = $taskRepository->findAll();
-        }
-
-        return $this->render('task/index.html.twig', [
-            'tasks' => $tasks,
-            'searchQuery' => $searchQuery,
-        ]);
+        return $this->render('task/index.html.twig');
     }
 
     /**
@@ -78,7 +68,6 @@ class TaskController extends AbstractController
 
         return new JsonResponse($result);
     }
-
 
     /**
      * @Route("/new", name="task_new")
@@ -210,3 +199,32 @@ class TaskController extends AbstractController
         return $this->redirectToRoute('task_index');
     }
 }
+
+//        $searchQuery = $request->query->get('q', '');  // Get search term from query string
+//        if ($searchQuery != '' ) {
+//            $tasks = $taskRepository->searchByTitle($searchQuery);
+//        } else {
+//            $tasks = $taskRepository->findAll();
+//        }
+
+//        if ($request->query->get('status', '') == 'none' ){
+//            $statusFilter = null;
+//        } else {
+//            $statusFilter = $request->query->get('status');
+//        }
+//
+//        $filters = [
+//            'title' => $request->query->get('title', ''),
+//            'dueDate' => $request->query->get('dueDate', ''),
+//            'status' => $statusFilter,
+//        ];
+//
+//        $sortField = $request->query->get('sortField', 'id');
+//        $sortDirection = $request->query->get('sortDirection', 'ASC');
+//
+//        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
+//            $sortDirection = 'ASC';
+//        }
+//
+//        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
+

@@ -1,3 +1,167 @@
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block body %}#}
+{#    <div class="container mt-4">#}
+{#        <h1 class="mb-4">Task List</h1>#}
+
+{#        <div class="d-flex justify-content-end mb-1">#}
+{#            <a href="{{ path('task_new') }}" class="btn btn-primary btn-md d-flex align-items-center gap-2 px-3" style="margin-bottom: 5px;">#}
+{#                <i class="bi bi-plus-circle"></i> Create Task#}
+{#            </a>#}
+{#        </div>#}
+
+{#        <div class="row">#}
+{#            <!-- Sidebar for filters -->#}
+{#            <div class="col-md-3">#}
+{#                <div class="card p-3">#}
+{#                    <h4>Filters</h4>#}
+{#                    <form id="searchForm" method="get" class="mb-3">#}
+{#                        <div class="mb-3">#}
+{#                            <label for="searchInput" class="form-label">Search by Title</label>#}
+{#                            <input type="text" id="searchInput" name="title" class="form-control" placeholder="Search tasks..." onkeyup="performSearch()">#}
+{#                        </div>#}
+
+{#                        <div class="mb-3">#}
+{#                            <label for="dueDateFilter" class="form-label">Due Date</label>#}
+{#                            <input type="date" id="dueDateFilter" class="form-control" placeholder="Due Date" onchange="performSearch()">#}
+{#                        </div>#}
+
+{#                        <div class="mb-3">#}
+{#                            <label for="statusFilter" class="form-label">Status</label>#}
+{#                            <select id="statusFilter" class="form-control" onchange="performSearch()">#}
+{#                                <option value="none">None</option>#}
+{#                                <option value="pending">Pending</option>#}
+{#                                <option value="in_progress">In Progress</option>#}
+{#                                <option value="completed">Completed</option>#}
+{#                            </select>#}
+{#                        </div>#}
+
+{#                        <div class="mb-3">#}
+{#                            <label for="sortField" class="form-label">Sort by</label>#}
+{#                            <select id="sortField" class="form-control" onchange="performSearch()">#}
+{#                                <option value="id">ID</option>#}
+{#                                <option value="title">Title</option>#}
+{#                                <option value="dueDate">Due Date</option>#}
+{#                            </select>#}
+{#                        </div>#}
+
+{#                        <div class="mb-3">#}
+{#                            <label for="sortDirection" class="form-label">Direction</label>#}
+{#                            <select id="sortDirection" class="form-control" onchange="performSearch()">#}
+{#                                <option value="ASC">Ascending</option>#}
+{#                                <option value="DESC">Descending</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <!-- Main content (Task Table) -->#}
+{#            <div class="col-md-9">#}
+{#                <table class="table table-striped" id="taskTable">#}
+{#                    <thead class="table-dark">#}
+{#                    <tr>#}
+{#                        <th>ID</th>#}
+{#                        <th>Title</th>#}
+{#                        <th>Status</th>#}
+{#                        <th>Due Date</th>#}
+{#                        <th>Image</th>#}
+{#                        <th>Actions</th>#}
+{#                    </tr>#}
+{#                    </thead>#}
+{#                    <tbody>#}
+{#                    {% for task in tasks %}#}
+{#                        <tr>#}
+{#                            <td>{{ task.id }}</td>#}
+{#                            <td>{{ task.title }}</td>#}
+{#                            <td>{{ task.status }}</td>#}
+{#                            <td>{{ task.dueDate ? task.dueDate|date('Y-m-d H:i') : 'N/A' }}</td>#}
+{#                            <td>#}
+{#                                {% if task.image %}#}
+{#                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ task.id }}">View Image</button>#}
+{#                                    <br>#}
+{#                                    <img src="{{ asset('uploads/task_images/' ~ task.image) }}" alt="Task Image" class="img-thumbnail mt-2" width="100">#}
+{#                                {% else %}#}
+{#                                    No Image#}
+{#                                {% endif %}#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <a href="{{ path('task_edit', { 'id': task.id }) }}" class="btn btn-warning btn-sm">Edit</a>#}
+{#                                <a href="{{ path('task_duplicate', { 'id': task.id }) }}" class="btn btn-info btn-sm">Duplicate</a>#}
+{#                                <form action="{{ path('task_delete', { 'id': task.id }) }}" method="post" class="d-inline">#}
+{#                                    <input type="hidden" name="_method" value="DELETE">#}
+{#                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>#}
+{#                                </form>#}
+{#                            </td>#}
+{#                        </tr>#}
+
+{#                        <!-- Modal for Viewing Image -->#}
+{#                        <div class="modal fade" id="viewImageModal{{ task.id }}" tabindex="-1" aria-labelledby="viewImageModalLabel{{ task.id }}" aria-hidden="true">#}
+{#                            <div class="modal-dialog modal-lg">#}
+{#                                <div class="modal-content">#}
+{#                                    <div class="modal-header">#}
+{#                                        <h5 class="modal-title" id="viewImageModalLabel{{ task.id }}">View Image for Task #{{ task.id }}</h5>#}
+{#                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#                                    </div>#}
+{#                                    <div class="modal-body">#}
+{#                                        <img src="{{ asset('uploads/task_images/' ~ task.image) }}" alt="Task Image" class="img-fluid">#}
+{#                                    </div>#}
+{#                                    <div class="modal-footer">#}
+{#                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+{#                                        <a href="{{ asset('uploads/task_images/' ~ task.image) }}" download class="btn btn-primary">Download Image</a>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                    </tbody>#}
+{#                </table>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <script>#}
+{#        function performSearch() {#}
+{#            const query = document.getElementById('searchInput').value;#}
+{#            const dueDateFilter = document.getElementById('dueDateFilter').value;#}
+{#            const statusFilter = document.getElementById('statusFilter').value;#}
+{#            const sortField = document.getElementById('sortField').value;#}
+{#            const sortDirection = document.getElementById('sortDirection').value;#}
+
+
+{#            fetch(`/task/api/task_search?title=${query}&dueDate=${dueDateFilter}&status=${statusFilter}&sortField=${sortField}&sortDirection=${sortDirection}`, {#}
+{#                method: 'GET',#}
+{#            })#}
+{#                .then(response => response.json())#}
+{#                .then(data => {#}
+{#                    const tableBody = document.querySelector('#taskTable tbody');#}
+{#                    tableBody.innerHTML = '';#}
+
+{#                    data.forEach(task => {#}
+{#                        const row = document.createElement('tr');#}
+{#                        row.innerHTML = `#}
+{#                            <td>${task.id}</td>#}
+{#                            <td>${task.title}</td>#}
+{#                            <td>${task.status}</td>#}
+{#                            <td>${task.dueDate}</td>#}
+{#                            <td>${task.image ?#}
+{#                            `<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewImageModal${task.id}">View Image</button>#}
+{#                                <br>#}
+{#                                <img src="/uploads/task_images/${task.image}" alt="Task Image" class="img-thumbnail mt-2" width="100">`#}
+{#                            : 'No Image'}#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <a href="/task/edit/${task.id}" class="btn btn-warning btn-sm">Edit</a>#}
+{#                                <a href="/task/duplicate/${task.id}" class="btn btn-info btn-sm">Duplicate</a>#}
+{#                                <a href="/task/delete/${task.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>#}
+{#                            </td>#}
+{#                        `;#}
+{#                        tableBody.appendChild(row);#}
+{#                    });#}
+{#                });#}
+{#        }#}
+{#    </script>#}
+{#{% endblock %}#}
 {% extends 'base.html.twig' %}
 
 {% block body %}
@@ -11,7 +175,6 @@
         </div>
 
         <div class="row">
-            <!-- Sidebar for filters -->
             <div class="col-md-3">
                 <div class="card p-3">
                     <h4>Filters</h4>
@@ -23,7 +186,7 @@
 
                         <div class="mb-3">
                             <label for="dueDateFilter" class="form-label">Due Date</label>
-                            <input type="date" id="dueDateFilter" class="form-control" placeholder="Due Date" onchange="performSearch()">
+                            <input type="date" id="dueDateFilter" class="form-control" onchange="performSearch()">
                         </div>
 
                         <div class="mb-3">
@@ -56,7 +219,6 @@
                 </div>
             </div>
 
-            <!-- Main content (Task Table) -->
             <div class="col-md-9">
                 <table class="table table-striped" id="taskTable">
                     <thead class="table-dark">
@@ -70,50 +232,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for task in tasks %}
-                        <tr>
-                            <td>{{ task.id }}</td>
-                            <td>{{ task.title }}</td>
-                            <td>{{ task.status }}</td>
-                            <td>{{ task.dueDate ? task.dueDate|date('Y-m-d H:i') : 'N/A' }}</td>
-                            <td>
-                                {% if task.image %}
-                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewImageModal{{ task.id }}">View Image</button>
-                                    <br>
-                                    <img src="{{ asset('uploads/task_images/' ~ task.image) }}" alt="Task Image" class="img-thumbnail mt-2" width="100">
-                                {% else %}
-                                    No Image
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ path('task_edit', { 'id': task.id }) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="{{ path('task_duplicate', { 'id': task.id }) }}" class="btn btn-info btn-sm">Duplicate</a>
-                                <form action="{{ path('task_delete', { 'id': task.id }) }}" method="post" class="d-inline">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-
-                        <!-- Modal for Viewing Image -->
-                        <div class="modal fade" id="viewImageModal{{ task.id }}" tabindex="-1" aria-labelledby="viewImageModalLabel{{ task.id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="viewImageModalLabel{{ task.id }}">View Image for Task #{{ task.id }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <img src="{{ asset('uploads/task_images/' ~ task.image) }}" alt="Task Image" class="img-fluid">
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <a href="{{ asset('uploads/task_images/' ~ task.image) }}" download class="btn btn-primary">Download Image</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -121,6 +239,11 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadFiltersFromURL(); // Charger les valeurs depuis l'URL si elles existent
+            performSearch();
+        });
+
         function performSearch() {
             const query = document.getElementById('searchInput').value;
             const dueDateFilter = document.getElementById('dueDateFilter').value;
@@ -128,6 +251,8 @@
             const sortField = document.getElementById('sortField').value;
             const sortDirection = document.getElementById('sortDirection').value;
 
+            // Mettre à jour l'URL sans recharger la page
+            updateURL(query, dueDateFilter, statusFilter, sortField, sortDirection);
 
             fetch(`/task/api/task_search?title=${query}&dueDate=${dueDateFilter}&status=${statusFilter}&sortField=${sortField}&sortDirection=${sortDirection}`, {
                 method: 'GET',
@@ -140,25 +265,51 @@
                     data.forEach(task => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${task.id}</td>
-                            <td>${task.title}</td>
-                            <td>${task.status}</td>
-                            <td>${task.dueDate}</td>
-                            <td>${task.image ?
+                <td>${task.id}</td>
+                <td>${task.title}</td>
+                <td>${task.status}</td>
+                <td>${task.dueDate || 'N/A'}</td>
+                <td>${task.image ?
                             `<button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewImageModal${task.id}">View Image</button>
-                                <br>
-                                <img src="/uploads/task_images/${task.image}" alt="Task Image" class="img-thumbnail mt-2" width="100">`
+                     <br>
+                     <img src="/uploads/task_images/${task.image}" alt="Task Image" class="img-thumbnail mt-2" width="100">`
                             : 'No Image'}
-                            </td>
-                            <td>
-                                <a href="/task/edit/${task.id}" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="/task/duplicate/${task.id}" class="btn btn-info btn-sm">Duplicate</a>
-                                <a href="/task/delete/${task.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
-                            </td>
-                        `;
+                </td>
+                <td>
+                    <a href="/task/edit/${task.id}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="/task/duplicate/${task.id}" class="btn btn-info btn-sm">Duplicate</a>
+                    <a href="/task/delete/${task.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+                </td>
+            `;
                         tableBody.appendChild(row);
                     });
                 });
         }
+
+        // Fonction pour mettre à jour l'URL sans recharger la page
+        function updateURL(title, dueDate, status, sortField, sortDirection) {
+            const params = new URLSearchParams(window.location.search);
+
+            if (title) params.set('title', title); else params.delete('title');
+            if (dueDate) params.set('dueDate', dueDate); else params.delete('dueDate');
+            if (status && status !== 'none') params.set('status', status); else params.delete('status');
+            if (sortField) params.set('sortField', sortField);
+            if (sortDirection) params.set('sortDirection', sortDirection);
+
+            const newUrl = window.location.pathname + '?' + params.toString();
+            window.history.replaceState(null, '', newUrl);
+        }
+
+        // Charger les valeurs des filtres depuis l'URL au chargement de la page
+        function loadFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('title')) document.getElementById('searchInput').value = params.get('title');
+            if (params.has('dueDate')) document.getElementById('dueDateFilter').value = params.get('dueDate');
+            if (params.has('status')) document.getElementById('statusFilter').value = params.get('status');
+            if (params.has('sortField')) document.getElementById('sortField').value = params.get('sortField');
+            if (params.has('sortDirection')) document.getElementById('sortDirection').value = params.get('sortDirection');
+        }
+
     </script>
 {% endblock %}
