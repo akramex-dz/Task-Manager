@@ -28,17 +28,56 @@ class TaskController extends AbstractController
     {
         return $this->render('task/index.html.twig');
     }
+//
+//    /**
+//    * @Route("/api/task_search", name="task_search", methods={"GET"})
+//    */
+//    public function search(TaskRepository $taskRepository, Request $request): JsonResponse
+//    {
+//        if ($request->query->get('status', '') == 'none' ){
+//            $statusFilter = null;
+//        } else {
+//            $statusFilter = $request->query->get('status');
+//        }
+//
+//        $filters = [
+//            'title' => $request->query->get('title', ''),
+//            'dueDate' => $request->query->get('dueDate', ''),
+//            'status' => $statusFilter,
+//        ];
+//
+//        $sortField = $request->query->get('sortField', 'id');
+//        $sortDirection = $request->query->get('sortDirection', 'ASC');
+//
+//        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
+//            $sortDirection = 'ASC';
+//        }
+//
+//        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
+//
+//        $result = [];
+//        foreach ($tasks as $task) {
+//            $result[] = [
+//                'id' => $task->getId(),
+//                'title' => $task->getTitle(),
+//                'status' => $task->getStatus(),
+//                'dueDate' => $task->getDueDate() ? $task->getDueDate()->format('Y-m-d H:i') : 'N/A',
+//                'image' => $task->getImage() ? $task->getImage() : null,
+//            ];
+//        }
+//
+//        return new JsonResponse($result);
+//    }
 
     /**
-    * @Route("/api/task_search", name="task_search", methods={"GET"})
-    */
+     * @Route("/api/task_search", name="task_search", methods={"GET"})
+     */
     public function search(TaskRepository $taskRepository, Request $request): JsonResponse
     {
-        if ($request->query->get('status', '') == 'none' ){
-            $statusFilter = null;
-        } else {
-            $statusFilter = $request->query->get('status');
-        }
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = max(1, (int) $request->query->get('limit', 10));
+
+        $statusFilter = $request->query->get('status', '') === 'none' ? null : $request->query->get('status');
 
         $filters = [
             'title' => $request->query->get('title', ''),
@@ -47,27 +86,33 @@ class TaskController extends AbstractController
         ];
 
         $sortField = $request->query->get('sortField', 'id');
-        $sortDirection = $request->query->get('sortDirection', 'ASC');
+        $sortDirection = strtoupper($request->query->get('sortDirection', 'ASC'));
 
-        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
+        if (!in_array($sortDirection, ['ASC', 'DESC'])) {
             $sortDirection = 'ASC';
         }
 
-        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
+        $paginationData = $taskRepository->searchByFiltersWithPagination($filters, $sortField, $sortDirection, $page, $limit);
 
-        $result = [];
-        foreach ($tasks as $task) {
-            $result[] = [
-                'id' => $task->getId(),
-                'title' => $task->getTitle(),
-                'status' => $task->getStatus(),
-                'dueDate' => $task->getDueDate() ? $task->getDueDate()->format('Y-m-d H:i') : 'N/A',
-                'image' => $task->getImage() ? $task->getImage() : null,
-            ];
-        }
-
-        return new JsonResponse($result);
+        return new JsonResponse([
+            'tasks' => array_map(function ($task) {
+                return [
+                    'id' => $task->getId(),
+                    'title' => $task->getTitle(),
+                    'status' => $task->getStatus(),
+                    'dueDate' => $task->getDueDate() ? $task->getDueDate()->format('Y-m-d H:i') : 'N/A',
+                    'image' => $task->getImage() ? $task->getImage() : null,
+                ];
+            }, $paginationData['tasks']),
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $paginationData['totalPages'],
+                'totalItems' => $paginationData['totalItems'],
+                'limit' => $limit,
+            ],
+        ]);
     }
+
 
     /**
      * @Route("/new", name="task_new")
@@ -199,32 +244,3 @@ class TaskController extends AbstractController
         return $this->redirectToRoute('task_index');
     }
 }
-
-//        $searchQuery = $request->query->get('q', '');  // Get search term from query string
-//        if ($searchQuery != '' ) {
-//            $tasks = $taskRepository->searchByTitle($searchQuery);
-//        } else {
-//            $tasks = $taskRepository->findAll();
-//        }
-
-//        if ($request->query->get('status', '') == 'none' ){
-//            $statusFilter = null;
-//        } else {
-//            $statusFilter = $request->query->get('status');
-//        }
-//
-//        $filters = [
-//            'title' => $request->query->get('title', ''),
-//            'dueDate' => $request->query->get('dueDate', ''),
-//            'status' => $statusFilter,
-//        ];
-//
-//        $sortField = $request->query->get('sortField', 'id');
-//        $sortDirection = $request->query->get('sortDirection', 'ASC');
-//
-//        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
-//            $sortDirection = 'ASC';
-//        }
-//
-//        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
-
