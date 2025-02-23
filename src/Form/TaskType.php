@@ -29,12 +29,15 @@ class TaskType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('image', FileType::class, [
-                'required' => false,
+                'label' => 'Upload Image (optional)',
                 'mapped' => false,
+                'required' => false,
                 'constraints' => [
                     new Image([
-                        'maxSize' => '2M',
-                    ])
+                        'maxSize' => '5M', // Adjust max file size if needed
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Please upload a valid image file (JPG, PNG, GIF)',
+                    ]),
                 ],
             ])
             ->add('save', SubmitType::class, ['label' => 'Save Task']);

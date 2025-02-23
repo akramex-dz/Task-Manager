@@ -10,6 +10,7 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,46 +29,6 @@ class TaskController extends AbstractController
     {
         return $this->render('task/index.html.twig');
     }
-//
-//    /**
-//    * @Route("/api/task_search", name="task_search", methods={"GET"})
-//    */
-//    public function search(TaskRepository $taskRepository, Request $request): JsonResponse
-//    {
-//        if ($request->query->get('status', '') == 'none' ){
-//            $statusFilter = null;
-//        } else {
-//            $statusFilter = $request->query->get('status');
-//        }
-//
-//        $filters = [
-//            'title' => $request->query->get('title', ''),
-//            'dueDate' => $request->query->get('dueDate', ''),
-//            'status' => $statusFilter,
-//        ];
-//
-//        $sortField = $request->query->get('sortField', 'id');
-//        $sortDirection = $request->query->get('sortDirection', 'ASC');
-//
-//        if (!in_array(strtoupper($sortDirection), ['ASC', 'DESC'])) {
-//            $sortDirection = 'ASC';
-//        }
-//
-//        $tasks = $taskRepository->searchByFilters($filters, $sortField, $sortDirection);
-//
-//        $result = [];
-//        foreach ($tasks as $task) {
-//            $result[] = [
-//                'id' => $task->getId(),
-//                'title' => $task->getTitle(),
-//                'status' => $task->getStatus(),
-//                'dueDate' => $task->getDueDate() ? $task->getDueDate()->format('Y-m-d H:i') : 'N/A',
-//                'image' => $task->getImage() ? $task->getImage() : null,
-//            ];
-//        }
-//
-//        return new JsonResponse($result);
-//    }
 
     /**
      * @Route("/api/task_search", name="task_search", methods={"GET"})
@@ -136,7 +97,7 @@ class TaskController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // handle exception if something goes wrong during file upload
+                    dd($e->getMessage());
                 }
 
                 $task->setImage($newFilename);
@@ -185,31 +146,50 @@ class TaskController extends AbstractController
         }
 
         $oldImage = $task->getImage();
+        $task->imageFileName = $oldImage;
 
-        $form = $this->createForm(TaskType::class, $task);
+        if ($oldImage) {
+            $oldImagePath = $this->getParameter('task_images_directory') . '/' . $oldImage;
+            if (file_exists($oldImagePath)) {
+                $task->setImage(new File($oldImagePath));
+            }
+        }
+
+        $form = $this->createForm(TaskType::class, $task, [
+            'allow_extra_fields' => true,
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $image = $form->get('image')->getData();
 
             if ($image) {
+                // Generate a new unique filename
                 $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $image->guessExtension();
 
                 try {
                     $image->move(
                         $this->getParameter('task_images_directory'),
                         $newFilename
                     );
+
+                    // Delete old image if exists
+                    if ($oldImage) {
+                        $oldImagePath = $this->getParameter('task_images_directory') . '/' . $oldImage;
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
                 } catch (FileException $e) {
-                    $this->addFlash('error', 'Image upload failed!');
+                    $this->addFlash('error', 'Image upload failed: ' . $e->getMessage());
                     return $this->redirectToRoute('task_edit', ['id' => $id]);
                 }
 
                 $task->setImage($newFilename);
             } else {
-                // If no new image was uploaded, retain the old image
                 $task->setImage($oldImage);
             }
 

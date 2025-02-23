@@ -18,6 +18,13 @@
     {{ form_errors(form.dueDate) }}
 </div>
 
+{% if task is defined and task.imageFileName %}
+    <div>
+        <p>Current Image:</p>
+        <img src="{{ asset('/uploads/task_images/' ~ task.imageFileName) }}" alt="{{ task.title }}" width="200">
+    </div>
+{% endif %}
+
 <div class="mb-3">
     {{ form_label(form.image, 'Upload Image', {'label_attr': {'class': 'form-label'}}) }}
     {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
