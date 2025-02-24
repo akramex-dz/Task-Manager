@@ -7,7 +7,7 @@ name: app
 # in multiple versions. Check the PHP documentation
 # (https://docs.platform.sh/languages/php.html#supported-versions)
 # to find the supported versions for the 'php' type.
-type: 'php:8.1'
+type: 'php:7.4'
 
 # The following block defines a single writable directory, 'web/uploads'
 # The 'source' specifies where the writable mount is. The 'local' source
